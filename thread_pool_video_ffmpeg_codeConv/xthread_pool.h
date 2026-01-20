@@ -1,5 +1,5 @@
  
-//34»ùÓÚÏß³Ì³ØÊµÏÖÒôÊÓÆµÅúÁ¿×ªÂë²âÊÔÈÎÎñ////////////////////////////////////// COMMENT ///////////////////////////////////////////////
+//34åŸºäºçº¿ç¨‹æ± å®ç°éŸ³è§†é¢‘æ‰¹é‡è½¬ç æµ‹è¯•ä»»åŠ¡////////////////////////////////////// COMMENT ///////////////////////////////////////////////
 
 #pragma once
 #include <thread>
@@ -16,7 +16,7 @@ public:
     std::function<bool()> is_exit = nullptr;
     auto GetReturn()
     {
-        //×èÈûµÈ´ı set_value
+        //é˜»å¡ç­‰å¾… set_value
         return p_.get_future().get();
     }
     void SetValue(int v)
@@ -24,7 +24,7 @@ public:
         p_.set_value(v);
     }
 private:
-    //ÓÃÀ´½ÓÊÕ·µ»ØÖµ
+    //ç”¨æ¥æ¥æ”¶è¿”å›å€¼
     std::promise<int> p_;
 };
 
@@ -32,16 +32,16 @@ class XThreadPool
 {
 public:
     //////////////////////////////////////////////
-    /// ³õÊ¼»¯Ïß³Ì³Ø
-    /// @para num Ïß³ÌÊıÁ¿
+    /// åˆå§‹åŒ–çº¿ç¨‹æ± 
+    /// @para num çº¿ç¨‹æ•°é‡
     void Init(int num);
 
     //////////////////////////////////////////////
-    /// Æô¶¯ËùÓĞÏß³Ì£¬±ØĞëÏÈµ÷ÓÃInit
+    /// å¯åŠ¨æ‰€æœ‰çº¿ç¨‹ï¼Œå¿…é¡»å…ˆè°ƒç”¨Init
     void Start();
 
     //////////////////////////////////////////////
-    /// Ïß³Ì³ØÍË³ö
+    /// çº¿ç¨‹æ± é€€å‡º
     void Stop();
 
     //void AddTask(XTask* task);
@@ -49,27 +49,27 @@ public:
 
     std::shared_ptr<XTask> GetTask();
 
-    //Ïß³Ì³ØÊÇ·ñÍË³ö
+    //çº¿ç¨‹æ± æ˜¯å¦é€€å‡º
     bool is_exit() { return is_exit_; }
 
     int task_run_count() { return task_run_count_; }
     ~XThreadPool() { Stop(); }
 private:
-    //Ïß³Ì³ØÏß³ÌµÄÈë¿Úº¯Êı
+    //çº¿ç¨‹æ± çº¿ç¨‹çš„å…¥å£å‡½æ•°
     void Run() ;
-    int thread_num_ = 0;//Ïß³ÌÊıÁ¿
+    int thread_num_ = 0;//çº¿ç¨‹æ•°é‡
     std::mutex mux_;
     //std::vector<std::thread*> threads_;
-    //Ïß³ÌÁĞ±í Ö¸ÕëÖ¸Õë°æ±¾
+    //çº¿ç¨‹åˆ—è¡¨ æŒ‡é’ˆæŒ‡é’ˆç‰ˆæœ¬
     std::vector< std::shared_ptr<std::thread> > threads_;
 
     //std::list<XTask*> tasks_;
     std::list<std::shared_ptr<XTask> > tasks_;
     
     std::condition_variable cv_;
-    bool is_exit_ = false; //Ïß³Ì³ØÍË³ö
+    bool is_exit_ = false; //çº¿ç¨‹æ± é€€å‡º
 
-    //ÕıÔÚÔËĞĞµÄÈÎÎñÊıÁ¿,Ïß³Ì°²È«
+    //æ­£åœ¨è¿è¡Œçš„ä»»åŠ¡æ•°é‡,çº¿ç¨‹å®‰å…¨
     std::atomic<int> task_run_count_ = {0};
 };
 
