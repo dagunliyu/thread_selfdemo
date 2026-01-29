@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libxmsg_server.a CMakeFiles/xmsg_server.dir/xmsg_server.cpp.o
+/usr/bin/ranlib ../lib/libxmsg_server.a

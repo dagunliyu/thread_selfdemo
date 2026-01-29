@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/promise_future.dir/link.d CMakeFiles/promise_future.dir/promise_future.cpp.o -o bin/promise_future

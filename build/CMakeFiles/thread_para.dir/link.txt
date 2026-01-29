@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/thread_para.dir/link.d CMakeFiles/thread_para.dir/thread_para.cpp.o -o bin/thread_para
