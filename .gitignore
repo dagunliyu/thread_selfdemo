@@ -35,3 +35,7 @@ Thumbs.db
 third_party/**/.git
 third_party/**/.gitignore
 third_party/**/.github
+
+# CodeQL
+_codeql_build_dir/
+_codeql_detected_source_root
