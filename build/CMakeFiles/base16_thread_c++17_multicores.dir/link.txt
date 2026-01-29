@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/base16_thread_c++17_multicores.dir/link.d CMakeFiles/base16_thread_c++17_multicores.dir/base16_thread_c++17_multicores.cpp.o -o bin/base16_thread_c++17_multicores

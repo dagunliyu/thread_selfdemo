@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/base16_thread_c++17_diffcoresComp.dir/link.d CMakeFiles/base16_thread_c++17_diffcoresComp.dir/base16_thread_c++17_diffcoresComp.cpp.o -o bin/base16_thread_c++17_diffcoresComp

@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/thread_lambda.dir/link.d CMakeFiles/thread_lambda.dir/thread_lambda.cpp.o -o bin/thread_lambda

@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/barrier_thread_c++20.dir/link.d CMakeFiles/barrier_thread_c++20.dir/barrier_thread_c++20.cpp.o -o bin/barrier_thread_c++20

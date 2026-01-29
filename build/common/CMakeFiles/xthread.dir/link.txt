@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../lib/libxthread.a CMakeFiles/xthread.dir/xthread.cpp.o
-/usr/bin/ranlib ../lib/libxthread.a

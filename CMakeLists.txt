@@ -11,6 +11,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 查找线程库
 find_package(Threads REQUIRED)
 
+# ============================================================================
+# 集成 spdlog 静态库
+# ============================================================================
+add_subdirectory(third_party)
+
 # 设置输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -24,7 +29,7 @@ function(add_thread_example source_file)
     get_filename_component(target_name ${source_file} NAME_WE)
     
     add_executable(${target_name} ${source_file})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads)
+    target_link_libraries(${target_name} PRIVATE Threads::Threads spdlog::spdlog)
     
     # 将target分组到Examples文件夹（Visual Studio/Xcode）
     set_target_properties(${target_name} PROPERTIES FOLDER "Examples")
@@ -42,7 +47,7 @@ function(add_subproject_executable target_name source_dir)
     
     add_executable(${target_name} ${SUB_SOURCES} ${SUB_HEADERS})
     target_include_directories(${target_name} PRIVATE ${source_dir})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads)
+    target_link_libraries(${target_name} PRIVATE Threads::Threads spdlog::spdlog)
     
     set_target_properties(${target_name} PROPERTIES FOLDER "Subprojects")
     
@@ -109,7 +114,7 @@ file(GLOB VIDEO_POOL_SOURCES "${VIDEO_POOL_DIR}/*.cpp")
 file(GLOB VIDEO_POOL_HEADERS "${VIDEO_POOL_DIR}/*.h")
 add_executable(video_ffmpeg_pool ${VIDEO_POOL_SOURCES} ${VIDEO_POOL_HEADERS})
 target_include_directories(video_ffmpeg_pool PRIVATE ${VIDEO_POOL_DIR})
-target_link_libraries(video_ffmpeg_pool PRIVATE Threads::Threads)
+target_link_libraries(video_ffmpeg_pool PRIVATE Threads::Threads spdlog::spdlog)
 set_target_properties(video_ffmpeg_pool PROPERTIES FOLDER "Subprojects")
 message(STATUS "[Subproject] Added: video_ffmpeg_pool")
 
