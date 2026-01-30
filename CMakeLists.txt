@@ -29,7 +29,15 @@ function(add_thread_example source_file)
     get_filename_component(target_name ${source_file} NAME_WE)
     
     add_executable(${target_name} ${source_file})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads spdlog::spdlog)
+    target_link_libraries(${target_name} PRIVATE 
+        Threads::Threads 
+        spdlog::spdlog
+        absl::log
+        absl::log_initialize
+        absl::log_internal_check_op
+        absl::flags
+        absl::flags_parse
+    )
     
     # 将target分组到Examples文件夹（Visual Studio/Xcode）
     set_target_properties(${target_name} PROPERTIES FOLDER "Examples")
@@ -47,7 +55,15 @@ function(add_subproject_executable target_name source_dir)
     
     add_executable(${target_name} ${SUB_SOURCES} ${SUB_HEADERS})
     target_include_directories(${target_name} PRIVATE ${source_dir})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads spdlog::spdlog)
+    target_link_libraries(${target_name} PRIVATE 
+        Threads::Threads 
+        spdlog::spdlog
+        absl::log
+        absl::log_initialize
+        absl::log_internal_check_op
+        absl::flags
+        absl::flags_parse
+    )
     
     set_target_properties(${target_name} PROPERTIES FOLDER "Subprojects")
     
@@ -60,12 +76,16 @@ endfunction()
 add_subdirectory(common)
 
 # ============================================================================
-# 2. 构建根目录下的独立示例程序
+# 2. 构建根目录下的独立示例程序（排除benchmark）
 # ============================================================================
 file(GLOB ROOT_EXAMPLES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 foreach(example_file ${ROOT_EXAMPLES})
-    add_thread_example(${example_file})
+    get_filename_component(example_name ${example_file} NAME_WE)
+    # 跳过benchmark文件，它需要特殊处理
+    if(NOT example_name STREQUAL "logging_benchmark")
+        add_thread_example(${example_file})
+    endif()
 endforeach()
 
 # ============================================================================
@@ -114,7 +134,15 @@ file(GLOB VIDEO_POOL_SOURCES "${VIDEO_POOL_DIR}/*.cpp")
 file(GLOB VIDEO_POOL_HEADERS "${VIDEO_POOL_DIR}/*.h")
 add_executable(video_ffmpeg_pool ${VIDEO_POOL_SOURCES} ${VIDEO_POOL_HEADERS})
 target_include_directories(video_ffmpeg_pool PRIVATE ${VIDEO_POOL_DIR})
-target_link_libraries(video_ffmpeg_pool PRIVATE Threads::Threads spdlog::spdlog)
+target_link_libraries(video_ffmpeg_pool PRIVATE 
+    Threads::Threads 
+    spdlog::spdlog
+    absl::log
+    absl::log_initialize
+    absl::log_internal_check_op
+    absl::flags
+    absl::flags_parse
+)
 set_target_properties(video_ffmpeg_pool PROPERTIES FOLDER "Subprojects")
 message(STATUS "[Subproject] Added: video_ffmpeg_pool")
 
@@ -124,6 +152,23 @@ message(STATUS "[Subproject] Added: video_ffmpeg_pool")
 # 示例：创建一个使用公共库的新target
 # add_executable(my_app main.cpp)
 # target_link_libraries(my_app PRIVATE xthread_pool)
+
+# ============================================================================
+# 5. 构建性能基准测试
+# ============================================================================
+add_executable(logging_benchmark logging_benchmark.cpp)
+target_link_libraries(logging_benchmark PRIVATE
+    Threads::Threads
+    spdlog::spdlog
+    absl::log
+    absl::log_initialize
+    absl::log_internal_check_op
+    absl::flags
+    absl::flags_parse
+    benchmark::benchmark
+)
+set_target_properties(logging_benchmark PROPERTIES FOLDER "Benchmarks")
+message(STATUS "[Benchmark] Added: logging_benchmark")
 
 # ============================================================================
 # 打印构建信息
