@@ -92,6 +92,22 @@ Abseil-cpp库（包含Abseil log）已集成到项目中，位于 `third_party/a
 
 ## 构建项目
 
+⚠️ **重要**: 本项目使用 Git 子模块管理第三方库。首次克隆时请使用：
+
+```bash
+# 推荐：克隆时同时初始化子模块
+git clone --recursive https://github.com/dagunliyu/thread_selfdemo.git
+
+# 或者先克隆，再初始化子模块
+git clone https://github.com/dagunliyu/thread_selfdemo.git
+cd thread_selfdemo
+git submodule update --init --recursive
+```
+
+详细的子模块使用说明请参阅 [SUBMODULES.md](SUBMODULES.md)。
+
+### 编译步骤
+
 ```bash
 # 创建构建目录
 mkdir build
