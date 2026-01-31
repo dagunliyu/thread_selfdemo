@@ -106,6 +106,23 @@ git submodule update --init --recursive
 
 详细的子模块使用说明请参阅 [SUBMODULES.md](SUBMODULES.md)。
 
+### CMake 构建选项
+
+本项目支持灵活控制 Abseil 库的构建模式，可以根据需求选择：
+
+```bash
+# 默认：仅构建 log 模块（推荐，构建最快）
+cmake ..
+
+# 构建所有 Abseil 模块
+cmake -DABSL_BUILD_MODE=ALL ..
+
+# 自定义构建特定模块
+cmake -DABSL_BUILD_MODE=CUSTOM -DABSL_CUSTOM_COMPONENTS="log;strings;time" ..
+```
+
+详细的构建选项说明请参阅 [CMAKE_OPTIONS.md](CMAKE_OPTIONS.md)。
+
 ### 编译步骤
 
 ```bash
