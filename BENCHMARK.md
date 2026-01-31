@@ -1,5 +1,10 @@
 # Logging Performance Benchmark: spdlog vs Abseil log
 
+> **📖 如何生成此文档？** 
+> 本文档由运行 `logging_benchmark` 程序生成。详细说明请参阅 [HOW_TO_BENCHMARK.md](HOW_TO_BENCHMARK.md)。
+> 
+> **🔧 重新生成基准测试：** 运行 `./scripts/run_benchmark.sh`
+
 ## 测试环境
 
 - **CPU**: 4 cores @ 2445.43 MHz

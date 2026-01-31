@@ -58,6 +58,12 @@ Abseil-cpp库（包含Abseil log）已集成到项目中，位于 `third_party/a
 
 详细的性能测试结果和分析，请参阅 [BENCHMARK.md](BENCHMARK.md)。
 
+### 如何生成基准测试结果
+
+想了解 BENCHMARK.md 是如何生成的？请查看：
+- 📖 [HOW_TO_BENCHMARK.md](HOW_TO_BENCHMARK.md) - 详细说明基准测试的生成过程和原理
+- 🔧 运行脚本：`./scripts/run_benchmark.sh` - 一键运行基准测试并生成结果
+
 ### 快速性能对比
 
 | 场景 | spdlog (同步) | spdlog (异步) | Abseil |
