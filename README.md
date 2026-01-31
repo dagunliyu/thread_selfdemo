@@ -12,7 +12,17 @@
 - ✅ 线程池实现
 - ✅ 各种同步机制示例
 
-## 日志库集成
+## 第三方库
+
+本项目集成了以下第三方库（通过Git子模块管理）：
+
+| 库 | 版本 | 用途 |
+|----|------|------|
+| [spdlog](https://github.com/gabime/spdlog) | v1.17.0 | 高性能日志库 |
+| [Abseil C++](https://github.com/abseil/abseil-cpp) | 20260107.0 | Google C++库（包含日志功能） |
+| [Google Benchmark](https://github.com/google/benchmark) | v1.9.5 | 性能基准测试框架 |
+
+详细版本信息和更新历史请参阅 [LIBRARY_VERSIONS.md](LIBRARY_VERSIONS.md)。
 
 ### spdlog集成
 
