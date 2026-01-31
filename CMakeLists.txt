@@ -11,6 +11,66 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 查找线程库
 find_package(Threads REQUIRED)
 
+# ============================================================================
+# 集成第三方库（spdlog, abseil, benchmark）
+# ============================================================================
+add_subdirectory(third_party)
+
+# ============================================================================
+# 根据Abseil构建模式确定要链接的组件
+# ============================================================================
+# 这个函数会根据third_party/CMakeLists.txt中的ABSL_BUILD_MODE设置
+# 返回应该链接的Abseil组件列表
+function(get_abseil_components RESULT_VAR)
+    if(ABSL_BUILD_MODE STREQUAL "LOG_ONLY")
+        # LOG_ONLY模式：仅链接log相关组件
+        set(${RESULT_VAR} 
+            absl::log
+            absl::log_initialize
+            absl::log_internal_check_op
+            absl::flags
+            absl::flags_parse
+            PARENT_SCOPE
+        )
+    elseif(ABSL_BUILD_MODE STREQUAL "CUSTOM")
+        # CUSTOM模式：链接用户指定的组件
+        set(CUSTOM_LIBS "")
+        foreach(component ${ABSL_CUSTOM_COMPONENTS})
+            # 如果组件名已经有absl::前缀，直接使用；否则添加前缀
+            if(component MATCHES "^absl::")
+                list(APPEND CUSTOM_LIBS "${component}")
+            else()
+                list(APPEND CUSTOM_LIBS "absl::${component}")
+            endif()
+        endforeach()
+        set(${RESULT_VAR} ${CUSTOM_LIBS} PARENT_SCOPE)
+    elseif(ABSL_BUILD_MODE STREQUAL "ALL")
+        # ALL模式：链接当前项目需要的所有组件（可以扩展）
+        set(${RESULT_VAR} 
+            absl::log
+            absl::log_initialize
+            absl::log_internal_check_op
+            absl::flags
+            absl::flags_parse
+            # 用户可以在这里添加更多需要的组件
+            PARENT_SCOPE
+        )
+    else()
+        # 默认使用LOG_ONLY
+        set(${RESULT_VAR} 
+            absl::log
+            absl::log_initialize
+            absl::log_internal_check_op
+            absl::flags
+            absl::flags_parse
+            PARENT_SCOPE
+        )
+    endif()
+endfunction()
+
+# 获取要链接的Abseil组件
+get_abseil_components(ABSL_LINK_COMPONENTS)
+
 # 设置输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -24,7 +84,11 @@ function(add_thread_example source_file)
     get_filename_component(target_name ${source_file} NAME_WE)
     
     add_executable(${target_name} ${source_file})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads)
+    target_link_libraries(${target_name} PRIVATE 
+        Threads::Threads 
+        spdlog::spdlog
+        ${ABSL_LINK_COMPONENTS}
+    )
     
     # 将target分组到Examples文件夹（Visual Studio/Xcode）
     set_target_properties(${target_name} PROPERTIES FOLDER "Examples")
@@ -42,7 +106,11 @@ function(add_subproject_executable target_name source_dir)
     
     add_executable(${target_name} ${SUB_SOURCES} ${SUB_HEADERS})
     target_include_directories(${target_name} PRIVATE ${source_dir})
-    target_link_libraries(${target_name} PRIVATE Threads::Threads)
+    target_link_libraries(${target_name} PRIVATE 
+        Threads::Threads 
+        spdlog::spdlog
+        ${ABSL_LINK_COMPONENTS}
+    )
     
     set_target_properties(${target_name} PROPERTIES FOLDER "Subprojects")
     
@@ -55,12 +123,16 @@ endfunction()
 add_subdirectory(common)
 
 # ============================================================================
-# 2. 构建根目录下的独立示例程序
+# 2. 构建根目录下的独立示例程序（排除benchmark）
 # ============================================================================
 file(GLOB ROOT_EXAMPLES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 foreach(example_file ${ROOT_EXAMPLES})
-    add_thread_example(${example_file})
+    get_filename_component(example_name ${example_file} NAME_WE)
+    # 跳过benchmark文件，它需要特殊处理
+    if(NOT example_name STREQUAL "logging_benchmark")
+        add_thread_example(${example_file})
+    endif()
 endforeach()
 
 # ============================================================================
@@ -109,7 +181,11 @@ file(GLOB VIDEO_POOL_SOURCES "${VIDEO_POOL_DIR}/*.cpp")
 file(GLOB VIDEO_POOL_HEADERS "${VIDEO_POOL_DIR}/*.h")
 add_executable(video_ffmpeg_pool ${VIDEO_POOL_SOURCES} ${VIDEO_POOL_HEADERS})
 target_include_directories(video_ffmpeg_pool PRIVATE ${VIDEO_POOL_DIR})
-target_link_libraries(video_ffmpeg_pool PRIVATE Threads::Threads)
+target_link_libraries(video_ffmpeg_pool PRIVATE 
+    Threads::Threads 
+    spdlog::spdlog
+    ${ABSL_LINK_COMPONENTS}
+)
 set_target_properties(video_ffmpeg_pool PROPERTIES FOLDER "Subprojects")
 message(STATUS "[Subproject] Added: video_ffmpeg_pool")
 
@@ -121,6 +197,19 @@ message(STATUS "[Subproject] Added: video_ffmpeg_pool")
 # target_link_libraries(my_app PRIVATE xthread_pool)
 
 # ============================================================================
+# 5. 构建性能基准测试
+# ============================================================================
+add_executable(logging_benchmark logging_benchmark.cpp)
+target_link_libraries(logging_benchmark PRIVATE
+    Threads::Threads
+    spdlog::spdlog
+    ${ABSL_LINK_COMPONENTS}
+    benchmark::benchmark
+)
+set_target_properties(logging_benchmark PROPERTIES FOLDER "Benchmarks")
+message(STATUS "[Benchmark] Added: logging_benchmark")
+
+# ============================================================================
 # 打印构建信息
 # ============================================================================
 message(STATUS "")
@@ -130,5 +219,9 @@ message(STATUS "========================================")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build Type:   ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Output Dir:   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+message(STATUS "  Abseil Mode:  ${ABSL_BUILD_MODE}")
+if(ABSL_BUILD_MODE STREQUAL "CUSTOM")
+    message(STATUS "  Abseil Comps: ${ABSL_CUSTOM_COMPONENTS}")
+endif()
 message(STATUS "========================================")
 message(STATUS "")
